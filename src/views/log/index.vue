@@ -14,6 +14,12 @@
                     <el-input style="width:300px"></el-input>
                     <el-button style="float:right">发送验证码</el-button>
                </el-form-item>
+                <el-form-item  style="text-align:center">
+                    <el-checkbox >我阅读并同意 <el-link type="primary"> 你的该协议条件</el-link></el-checkbox>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" style="width:450px ">主要按钮</el-button>
+                </el-form-item>
            </el-form>
 
         </el-card>
