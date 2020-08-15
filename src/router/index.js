@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home/Home.vue'
 import log from '../views/log/index.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -22,6 +23,7 @@ const routes = [
     component: log
 
   }
+
   // {
   //   path: '/about',
   //   name: 'About',
