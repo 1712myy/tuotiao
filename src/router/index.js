@@ -3,14 +3,39 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home/Home.vue'
 import log from '../views/log/index.vue'
 
+import indes from '../views/index/index.vue'
+import relsee from '../views/router/home.vue'
+import mian from '../views/mian/mian.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
+  // {
+  //   path: '/',
+  //   redirect: '/home'
+  // },
+
+  // 二级路由
+
   {
     path: '/',
-    redirect: '/home'
-  },
+    component: Home,
+    children: [
+      {
+        path: '/',
+        component: indes
+      },
+      {
+        path: '/indes',
+        component: relsee
+      },
+      {
+        path: '/mian',
+        component: mian
+      }
+    ]
 
+  },
   // 一级路由
 
   {

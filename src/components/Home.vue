@@ -25,7 +25,8 @@
             <el-dropdown-menu>
               <el-dropdown-item>个人信息</el-dropdown-item>
               <el-dropdown-item>git地址</el-dropdown-item>
-              <el-dropdown-item>退出</el-dropdown-item>
+                 <!-- native 原生js的修饰符 -->
+              <el-dropdown-item @click.native="loginto">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
@@ -37,7 +38,31 @@
 
 <script>
 export default {
-
+  methods: {
+    loginto () {
+      console.log(122)
+      this.$confirm('你确定要退出吗', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 确认删除
+        // 删除
+        window.localStorage.removeItem('user-token')
+        // 返回页面
+        this.$router.push('/log')
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '退出失败'
+        })
+      })
+    }
+  }
 }
 </script>
 

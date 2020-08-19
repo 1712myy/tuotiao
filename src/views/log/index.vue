@@ -7,16 +7,16 @@
             </div>
            <!-- 表单组件 -->
            <el-form ref="forms" style="margin-top:20px" :model=" formEex" :rules=" rules">
-               <el-form-item prop='sjh'>
+               <el-form-item prop='mobile'>
                    <!-- 手机号 -->
-                   <el-input v-model="formEex.sjh" ></el-input>
+                   <el-input v-model="formEex.mobile" ></el-input>
                </el-form-item>
-               <el-form-item prop="yzm">
-                    <el-input  v-model="formEex.yzm" style="width:300px"></el-input>
-                    <el-button style="float:right">发送验证码</el-button>
+               <el-form-item prop="code"  >
+                    <el-input   v-model="formEex.code" style="width:300px"></el-input>
+                    <el-button style="float:right" >发送验证码</el-button>
                </el-form-item >
-                <el-form-item  prop="tiaoyu" style="text-align:center" >
-                    <el-checkbox  v-model="formEex.tiaoyu">我阅读并同意 <el-link type="primary"> 你的该协议条件</el-link></el-checkbox>
+                <el-form-item  prop="check" style="text-align:center" >
+                    <el-checkbox  v-model="formEex.check">我阅读并同意 <el-link type="primary"> 你的该协议条件</el-link></el-checkbox>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" style="width:450px "  @click="formes">主要按钮</el-button>
@@ -33,22 +33,22 @@ export default {
   data () {
     return {
       formEex: {
-        sjh: '',
-        yzm: '',
-        tiaoyu: ''
+        mobile: '',
+        code: '',
+        check: false
 
       },
       // 校正规则
       rules: {
-        sjh: [
+        mobile: [
           { required: true, message: '请输入手机号' },
           { pattern: /^1[123479]\d{9}$/, message: '正确请输入手机号' }
         ],
-        yam: [
+        code: [
           { required: true, message: '请输入验证码' },
-          { pattern: /^\d{{6}$/, message: '输入验证码' }
+          { pattern: /^\d{6}$/, message: '输入验证码6位' }
         ],
-        tiaoyu: [
+        check: [
           {
             validator: function (rule, value, callback) {
               // rule 当前规则  value当前表单项的值   callback 回调函数
@@ -65,20 +65,23 @@ export default {
     }
   },
   methods: {
+
     formes () {
-      //
-      this.$refs.forms.validator((isok) => {
+      this.$refs.forms.validate((isok) => {
         if (isok) {
           this.$axios({
             url: '/authorizations',
-            data: this.loginForm,
+            data: this.formEex,
             method: 'POST'
-          }).then(ser => {
-            console.log(ser.data)
+          }).then(res => {
+            console.log(res.data.data.token)
+            window.localStorage.setItem('user-token', res.data.data.token)
+            this.$router.push('/home')
           })
         }
       })
     }
+
   }
 }
 
