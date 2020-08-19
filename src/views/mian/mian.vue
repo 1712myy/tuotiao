@@ -5,14 +5,15 @@
       <div slot="header" class="clearfix">
         <span>全部图文</span>
       </div>
-      <el-form ref="form" label-width="80px">
+      <el-form ref="form" label-width="80px" >
         <el-form-item label="文章状态">
           <el-radio-group v-model="filterForm.status">
-            <el-radio label="全部"></el-radio>
-            <el-radio label="草稿"></el-radio>
-            <el-radio label="待审核"></el-radio>
-            <el-radio label="审核通过"></el-radio>
-            <el-radio label="审核失败"></el-radio>
+            <el-radio :label="null">全部</el-radio>
+            <el-radio label="0">草稿</el-radio>
+            <el-radio label="1">待审核</el-radio>
+            <el-radio label="2">审核通过</el-radio>
+            <el-radio label="3">审核失败</el-radio>
+            <el-radio label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表">
@@ -26,12 +27,12 @@
             v-model="rangeDate"
             type="daterange"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
+           begin_pubdate="开始日期"
+           end_pubdate="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">查询</el-button>
+          <el-button type="primary" @click="logadArticles(1)">查询</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -41,7 +42,7 @@
     <el-card class="box-card">
 
     <div slot="header" class="clearfix">
-        <span>共找到59806条符合条件的内容</span>
+        <span>共找到{{totalCount}}条符合条件的内容</span>
     </div>
     <template>
 
@@ -67,6 +68,21 @@
         prop="status"
         label="状态"
         >
+       <template slot-scope="scope">
+        <el-tag
+          :type=" articleStatus[scope.row.status].type"
+        >
+          {{articleStatus[scope.row.status].label}}
+        <!-- <span v-show="scope.row.status === 0">草稿</span>
+            <span v-show="scope.row.status === 1">待审核</span>
+            <span v-show="scope.row.status === 2">审核通过</span>
+            <span v-show="scope.row.status === 3">审核失败</span>
+            <span v-show="scope.row.status === 4">已删除</span> -->
+
+        </el-tag>
+
+       </template>
+
       </el-table-column>
       <el-table-column
         prop="pubdate"
@@ -78,6 +94,10 @@
          prop="address"
           label="操作"
          >
+         <template>
+             <el-button type="primary" icon="el-icon-edit"></el-button>
+              <el-button type="primary" icon="el-icon-delete"></el-button>
+          </template>
       </el-table-column>
 
       </el-table>
@@ -85,6 +105,14 @@
     </template>
 
     </el-card>
+    <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="totalCount"
+       @current-change = 'onPageChange'
+
+      >
+    </el-pagination>
       </div>
 </template>
 
@@ -100,34 +128,66 @@ export default {
         begin_pubdate: '',
         end_pubdate: ''
       },
+
+      articleStatus: [
+        {
+          value: 0,
+          label: '草稿'
+        },
+        {
+          value: 1,
+          label: '待审核'
+        },
+        {
+          value: 2,
+          label: '审核通过'
+        },
+        {
+          value: 3,
+          label: '审核失败'
+        },
+        {
+          value: 4,
+          label: '已删除'
+        }
+
+      ],
       rangeDate: '',
-      articles: [] // 文章列表
+      articles: [], // 文章列表
+      totalCount: 50 // 默认页数
     }
   },
   created () {
     this.logadArticles()
   },
   methods: {
-    logadArticles () {
-      // const token = window.localStorage.getItem('user-token')
+    logadArticles (page = 1) {
+      const token = window.localStorage.getItem('user-token')
+      console.log(token)
       this.$axios({
         method: 'GET',
         url: '/articles',
         headers: {
-          Authorization: `Beare ${window.localStorage.getItem('user-token')}`
-
+          Authorization: `Bearer ${token}`
+        },
+        params: {
+          page,
+          per_page: 10,
+          status: this.filterForm.status
         }
-
       }).then(res => {
-        console.log(res.data.data)
-        // this.articles = res.data.data.results
+        console.log(res)
+        this.articles = res.data.data.results
         // 更新总数
       }).catch(err => {
         console.log(err, '获取数据失败')
       })
+    },
+    onPageChange (page) {
+      this.logadArticles(page)
     }
-
   }
+
 }
 </script>
 
