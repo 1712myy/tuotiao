@@ -5,10 +5,14 @@
     <el-form-item label="活动名称">
         <el-input v-model="article.title"></el-input>
     </el-form-item>
+        <!-- 富文本 -->
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="article.content"
+          />
   <el-form-item label="内容">
         <el-input v-model="article.content"></el-input>
   </el-form-item>
-      <!-- 富文本 -->
 
   <el-form-item label="频道列表">
      <el-select v-model="article.channel_id" placeholder="列表内容">
@@ -21,8 +25,12 @@
         ></el-option>
 
     </el-select>
-  </el-form-item>
+  </el-form-item >
+    <el-form-item label="封面">
+       <el-radio-group v-model="article.cover">
 
+          </el-radio-group>
+    </el-form-item>
   <el-form-item>
     <el-button type="primary"  @click="onAdd(false)">发布</el-button>
     <el-button  @click="onchange(true)">存入文档</el-button>
@@ -33,7 +41,19 @@
 </template>
 
 <script >
+import Vue from 'vue'
+import VueQuillEditor, { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.core.css' // import styles
+import 'quill/dist/quill.snow.css' // for snow theme
+import 'quill/dist/quill.bubble.css' // for bubble theme
+
+Vue.use(VueQuillEditor /* { default global options } */)
 export default {
+  name: 'abc',
+
+  components: {
+    quillEditor
+  },
   data () {
     return {
       article: {
@@ -50,6 +70,10 @@ export default {
   },
   created () {
     this.logadchangcles()
+    // 添加和编辑的都使用
+    if (this.$router.prams.articleid) {
+      this.logadArticles()
+    }
   },
   methods: {
     logadchangcles () {
@@ -68,14 +92,15 @@ export default {
       this.$axios({
         methods: 'POST',
         url: '/articles',
-        headers: {
-          Authorization: `Bearer${localStorage.getItem('user-token')}`
-        },
+        // headers: {
+        //   Authorization: `Bearer${localStorage.getItem('user-token')}`
+        // },
+
         // jQurey 参数
         prams: {
           draft
         },
-        data: this.article
+        data: this.article // 封页
       }).then(res => {
         console.log(res)
       }).catch(err => {

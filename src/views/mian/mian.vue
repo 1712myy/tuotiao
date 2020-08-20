@@ -102,9 +102,9 @@
          prop="address"
           label="操作"
          >
-         <template>
-             <el-button type="primary" icon="el-icon-edit"></el-button>
-              <el-button type="primary" icon="el-icon-delete"></el-button>
+         <template slot-scope="scope" >
+             <el-button type="primary" icon="el-icon-edit" @click="$router.push('/indes/'+scope.row.id)"></el-button>
+              <el-button type="primary" icon="el-icon-delete" @click="onDel(scope.row.id)"></el-button>
           </template>
       </el-table-column>
 
@@ -214,6 +214,20 @@ export default {
         this.channels = res.data.data.channels
       }).catch(err => {
         console.log(err, '获取数据失败')
+      })
+    },
+    onDel (articleid) {
+      this.$axios({
+        methods: ' DELETE',
+        url: `/articles/${articleid}`
+        // headers: {
+        //   Authorization: `Bearer${window.logadchangcles.getItem('user-token')}`
+        // }
+      }).then(res => {
+        console.log('成功')
+        this.logadArticles(1)
+      }).catch(err => {
+        console.log(err, '失败')
       })
     }
   }
