@@ -18,8 +18,14 @@
         </el-form-item>
         <el-form-item label="频道列表">
           <el-select placeholder="请选择活动区域" v-model="filterForm.channel_id">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+
+            <el-option label="所有列表" :value="null"></el-option>
+            <el-option
+              :label="channel.name"
+              :value="channel.id"
+              v-for="channel in channels" :key="channel.id"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间选择">
@@ -27,8 +33,10 @@
             v-model="rangeDate"
             type="daterange"
             range-separator="至"
-           begin_pubdate="开始日期"
-           end_pubdate="结束日期">
+           begin-pubdate="开始日期"
+           end-pubdate="结束日期"
+            value-format="yyyy-MM-dd"
+           >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -123,8 +131,8 @@ export default {
     return {
       // 过滤数据的表单
       filterForm: {
-        status: '',
-        channel_id: '',
+        status: null,
+        channel_id: null,
         begin_pubdate: '',
         end_pubdate: ''
       },
@@ -154,11 +162,15 @@ export default {
       ],
       rangeDate: '',
       articles: [], // 文章列表
-      totalCount: 50 // 默认页数
+      totalCount: 0, // 默认页数
+      loading: true,
+      channels: [] // 频道列表
     }
   },
   created () {
     this.logadArticles()
+
+    this.logadchangcles()
   },
   methods: {
     logadArticles (page = 1) {
@@ -171,20 +183,38 @@ export default {
           Authorization: `Bearer ${token}`
         },
         params: {
-          page,
-          per_page: 10,
-          status: this.filterForm.status
+          page, // 页码
+          per_page: 10, // 页数
+          status: this.filterForm.status, // 文章状态
+          channel_id: this.filterForm.channel_id, // 媒体频道
+          begin_pubdate: this.rangeDate ? this.rangeDate[0] : null, // 开始的时间
+          end_pubdate: this.rangeDate ? this.rangeDate[1] : null // 结束的日期
+
         }
       }).then(res => {
         console.log(res)
         this.articles = res.data.data.results
-        // 更新总数
+        // 更新总页
+        this.totalCount = res.data.data.total_count
       }).catch(err => {
         console.log(err, '获取数据失败')
       })
     },
     onPageChange (page) {
+      // 指定的总页数
       this.logadArticles(page)
+    },
+
+    logadchangcles () {
+      this.$axios({
+        methods: 'GET',
+        url: '/channels'
+      }).then(res => {
+        console.log(res.data.data)
+        this.channels = res.data.data.channels
+      }).catch(err => {
+        console.log(err, '获取数据失败')
+      })
     }
   }
 
