@@ -1,9 +1,14 @@
 <template>
+
     <div class="publish">
-      <el-card>
-          <el-form ref="article" :model="article" label-width="80px">
+    <el-card>
+           <div slot="header" class="clearfix">
+          <span>文章发布</span>
+      </div>
+
+    <el-form ref="article" :model="article" label-width="80px">
     <el-form-item label="活动名称">
-        <el-input v-model="article.title"></el-input>
+        <el-input v-model="article.title" ></el-input>
     </el-form-item>
         <!-- 富文本 -->
           <quill-editor
@@ -19,15 +24,16 @@
 
         <el-option label="所有列表"  :value="null"></el-option>
         <el-option
-          :label="channel.name"
-          :value="channel.id"
-          v-for="channel in channels" :key="channel.id"
-        ></el-option>
+             :label="channel.name"
+              :value="channel.id"
+              v-for="channel in channels" :key="channel.id"
+        >
+        </el-option>
 
     </el-select>
   </el-form-item >
     <el-form-item label="封面">
-       <el-radio-group v-model="article.cover">
+          <el-radio-group v-model="article.cover">
 
           </el-radio-group>
     </el-form-item>
@@ -62,49 +68,69 @@ export default {
         cover: {
           type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
           images: [] // 图片，无图就是空数组即可
+
         },
+
+        message: '',
+
         channel_id: ''
+
       },
+      title: '',
+      channel_id: '',
+      content: '',
+
       channels: []
     }
   },
   created () {
     this.logadchangcles()
-    // 添加和编辑的都使用
-    if (this.$router.prams.articleid) {
-      this.logadArticles()
+    //   添加和编辑使用的都是这个组件
+    if (this.$route.params.id) {
+      //  params  只有编辑的时候，初始化 ，有id 加载文章内容
+      this.logadd()
     }
   },
-  methods: {
-    logadchangcles () {
-      this.$axios({
-        methods: 'GET',
-        url: '/channels'
 
+  methods: {
+
+    logadd () {
+      this.$axios({
+        method: 'GET',
+        url: `/articles/${this.$route.params.id}`
       }).then(res => {
-        // console.log(res.data.data)
-        this.channels = res.data.data.channels
-      }).catch(err => {
-        console.log(err, '获取数据失败')
+        console.log(res)
+        this.article = res.data.data
       })
     },
+
+    // 添加列表内容
     onAdd (draft) {
       this.$axios({
-        methods: 'POST',
+        method: 'POST',
         url: '/articles',
-        // headers: {
-        //   Authorization: `Bearer${localStorage.getItem('user-token')}`
-        // },
-
-        // jQurey 参数
-        prams: {
+        data: this.article,
+        params: {
           draft
-        },
-        data: this.article // 封页
+        }
+
       }).then(res => {
         console.log(res)
       }).catch(err => {
-        console.log(err, '请求失败')
+        console.log(err, '数据失败')
+      })
+    },
+
+    // 频道表
+    logadchangcles () {
+      this.$axios({
+        method: 'GET',
+        url: '/channels'
+      }).then(res => {
+      // console.log(res.data.data)
+        this.channels = res.data.data.channels
+      }).catch(err => {
+        console.log(err, '获取数据失败')
       })
     }
 

@@ -104,6 +104,7 @@
          >
          <template slot-scope="scope" >
              <el-button type="primary" icon="el-icon-edit" @click="$router.push('/indes/'+scope.row.id)"></el-button>
+
               <el-button type="primary" icon="el-icon-delete" @click="onDel(scope.row.id)"></el-button>
           </template>
       </el-table-column>
@@ -169,8 +170,9 @@ export default {
   },
   created () {
     this.logadArticles()
-
+    //  每一项列表的内容
     this.logadchangcles()
+    //  频道列表
   },
   methods: {
     logadArticles (page = 1) {
@@ -205,9 +207,10 @@ export default {
       this.logadArticles(page)
     },
 
+    //  频道列表
     logadchangcles () {
       this.$axios({
-        methods: 'GET',
+        method: 'GET',
         url: '/channels'
       }).then(res => {
         console.log(res.data.data)
@@ -216,13 +219,13 @@ export default {
         console.log(err, '获取数据失败')
       })
     },
-    onDel (articleid) {
+
+    //  删除按钮
+    onDel (article) {
       this.$axios({
         methods: ' DELETE',
-        url: `/articles/${articleid}`
-        // headers: {
-        //   Authorization: `Bearer${window.logadchangcles.getItem('user-token')}`
-        // }
+        url: `/articles/${article}`
+
       }).then(res => {
         console.log('成功')
         this.logadArticles(1)

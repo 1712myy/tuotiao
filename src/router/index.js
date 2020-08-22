@@ -6,7 +6,7 @@ import log from '../views/log/index.vue'
 import indes from '../views/index/index.vue'
 import relsee from '../views/router/home.vue'
 import mian from '../views/mian/mian.vue'
-
+import pin from '../views/pinlun/index.vue'
 import axios from 'axios'
 import JSONbig from 'json-bigint'
 
@@ -60,13 +60,19 @@ const routes = [
         path: '/indes',
         component: relsee
       },
+
+      // 动态路由
       {
-        path: '/indes/:articleid',
+        path: '/indes/:id',
         component: relsee
       },
       {
         path: '/mian',
         component: mian
+      },
+      {
+        path: '/pinlun',
+        component: pin
       }
     ]
 
