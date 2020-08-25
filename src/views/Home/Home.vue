@@ -27,7 +27,7 @@
            <el-menu-item-group >
                 <el-menu-item index="/indes" >文章发布</el-menu-item>
                 <el-menu-item index="/mian">内容列表</el-menu-item>
-                <el-menu-item >评论列表</el-menu-item>
+                <el-menu-item index="/pinlun">评论列表</el-menu-item>
                 <el-menu-item >素材管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -44,8 +44,8 @@
             </el-menu-item-group>
           </el-submenu>
           <!-- 一级路由 -->
-          <el-menu-item >
-                   <span slot="title">账户信息</span>
+          <el-menu-item index="/user">
+                   <span slot="title" >账户信息</span>
           </el-menu-item>
 
      </el-menu>

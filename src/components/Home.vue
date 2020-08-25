@@ -14,7 +14,7 @@
            <span>消息</span>
           </el-tooltip>
 
-                  <img src="../assets/img/avatar.jpg" alt="">
+            <img src="../assets/img/avatar.jpg" alt="">
 
           <!-- 下拉菜单 -->
           <el-dropdown trigger='click'>
@@ -37,8 +37,34 @@
 </template>
 
 <script>
+
 export default {
+  data () {
+    return {
+      data: {
+        name: '',
+        photo: ''
+      }
+    }
+  },
+
+  created () {
+    this.logPhont()
+  },
   methods: {
+
+    // 图像头像图片
+
+    logPhont () {
+      this.axios({
+        method: 'GET',
+        url: '/user/profile'
+      }).then(res => {
+        console.log(res)
+        this.user = res.data.data
+      })
+    },
+
     loginto () {
       console.log(122)
       this.$confirm('你确定要退出吗', {
