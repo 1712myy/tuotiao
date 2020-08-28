@@ -28,14 +28,28 @@
               :value="channel.id"
               v-for="channel in channels" :key="channel.id"
         >
+
         </el-option>
 
     </el-select>
   </el-form-item >
-    <el-form-item label="封面">
-          <el-radio-group v-model="article.cover">
+    <el-form-item label="封面"   >
+      <el-radio-group v-model="article.type" >
 
-          </el-radio-group>
+               <el-radio :label="1">单图</el-radio>
+              <el-radio :label="3">三图</el-radio>
+              <el-radio :label="0">自动</el-radio>
+              <el-radio :label="-1">无图</el-radio>
+
+      </el-radio-group>
+         <template v-if="article.cover.type !=='-1'">
+           <el-row>
+              <el-col :span="6"
+                v-for="item in article.type " :key="item">
+                  <phot-imgs></phot-imgs>
+              </el-col>
+           </el-row>
+         </template>
     </el-form-item>
   <el-form-item>
     <el-button type="primary"  @click="onAdd(false)">发布</el-button>
@@ -52,13 +66,14 @@ import VueQuillEditor, { quillEditor } from 'vue-quill-editor'
 import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
-
+import phot from '../hpots/index'
 Vue.use(VueQuillEditor /* { default global options } */)
 export default {
   name: 'abc',
 
   components: {
-    quillEditor
+    quillEditor,
+    'phot-imgs': phot
   },
   data () {
     return {

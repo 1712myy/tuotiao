@@ -8,7 +8,7 @@
                http-request 他是自定义上组件 一个事件
             -->
             <el-upload
-               http-Request="onPhoto"
+                :http-request="onPhoto"
                 class="avatar-uploader"
                 action="https://jsonplaceholder.typicode.com/posts/"
                 :show-file-list="false">
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import event from '../pop'
 export default {
   name: 'qq',
 
@@ -54,12 +55,28 @@ export default {
     }
   },
   created () {
-    this.onSubmit()
+    this.logtext() // 获取数据
   },
   methods: {
-    onSubmit () {
+
+    // 获取数据
+    logtext () {
       this.$axios({
         method: 'GET',
+        url: '/user/profile'
+
+      }).then(res => {
+        //  consloe.log(res)
+        this.user = res.data.data
+      }).catch(err => {
+        console.log(err, '获取失败')
+      })
+    },
+
+    // 编辑数据
+    onSubmit () {
+      this.$axios({
+        method: 'PATCH',
         url: '/user/profile',
         data: {
           name: this.user.name,
@@ -69,6 +86,7 @@ export default {
       }).then(res => {
         // console.log(res)
         this.user = res.data.data
+        event.$emit('text', this.user)
         this.$message({
           type: 'success',
           message: '修改成功'
@@ -80,9 +98,10 @@ export default {
 
     //  照片（头像）上传
     // 经过简单测试 回调函数中参数会收到一个参数，有上传相关的对象file
-    onPhoto (flixe) {
+
+    onPhoto (config) {
       const fd = new FormData()
-      fd.append('photo', flixe.flixe)
+      fd.append('photo', config.file)
 
       this.$axios({
         method: 'PATCH',
@@ -90,7 +109,8 @@ export default {
         data: fd
       }).then(res => {
         // console.log(res.data)
-        this.user = res.data.data.photo
+        this.user.photo = res.data.data.photo
+        event.$emit('text', this.user)
       }).catch(err => {
         console.log(err, '失败')
       })
